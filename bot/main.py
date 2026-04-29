@@ -110,7 +110,14 @@ async def main() -> None:
     app.add_handler(build_conversation_handler())
 
     logger.info("Бот запущен. Ожидание сообщений...")
-    await app.run_polling(drop_pending_updates=True)
+    async with app:
+        await app.start()
+        await app.updater.start_polling(drop_pending_updates=True)
+        try:
+            await asyncio.Event().wait()
+        finally:
+            await app.updater.stop()
+            await app.stop()
 
 
 if __name__ == "__main__":

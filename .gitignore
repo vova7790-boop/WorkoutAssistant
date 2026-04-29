@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *.pyo
 bot/workout_history.db
+__pycache__/
