@@ -102,16 +102,20 @@ def build_conversation_handler() -> ConversationHandler:
     )
 
 
-def main() -> None:
-    asyncio.run(init_db())
+async def main() -> None:
+    await init_db()
     logger.info("База данных инициализирована.")
 
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(build_conversation_handler())
 
     logger.info("Бот запущен. Ожидание сообщений...")
-    app.run_polling(drop_pending_updates=True)
+    async with app:
+        await app.start()
+        await app.updater.start_polling(drop_pending_updates=True)
+        await app.updater.idle()
+        await app.stop()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
