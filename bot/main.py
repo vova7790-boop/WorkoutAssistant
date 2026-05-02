@@ -1,4 +1,3 @@
-import asyncio
 import logging
 
 from telegram.ext import (
@@ -102,23 +101,17 @@ def build_conversation_handler() -> ConversationHandler:
     )
 
 
-async def main() -> None:
-    await init_db()
+def main() -> None:
+    import asyncio
+    asyncio.run(init_db())
     logger.info("База данных инициализирована.")
 
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(build_conversation_handler())
 
     logger.info("Бот запущен. Ожидание сообщений...")
-    async with app:
-        await app.start()
-        await app.updater.start_polling(drop_pending_updates=True)
-        try:
-            await asyncio.Event().wait()
-        finally:
-            await app.updater.stop()
-            await app.stop()
+    app.run_polling(drop_pending_updates=True)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
