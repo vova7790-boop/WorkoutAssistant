@@ -101,12 +101,13 @@ def build_conversation_handler() -> ConversationHandler:
     )
 
 
-def main() -> None:
-    import asyncio
-    asyncio.run(init_db())
+async def post_init(app: Application) -> None:
+    await init_db()
     logger.info("База данных инициализирована.")
 
-    app = Application.builder().token(BOT_TOKEN).build()
+
+def main() -> None:
+    app = Application.builder().token(BOT_TOKEN).post_init(post_init).build()
     app.add_handler(build_conversation_handler())
 
     logger.info("Бот запущен. Ожидание сообщений...")
